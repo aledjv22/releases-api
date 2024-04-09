@@ -65,3 +65,12 @@ def profile (request):
     serializer = UserSerializer(instance=request.user)
     
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    request.user.auth_token.delete()
+    
+    return Response({"message": "Cierre de sesión exitoso."}, status=status.HTTP_200_OK)
