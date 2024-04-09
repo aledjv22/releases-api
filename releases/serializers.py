@@ -8,7 +8,11 @@ class ReleaseSerializer(serializers.ModelSerializer):
 
   def validate(self, data):
     required_fields = ['title', 'description', 'tag', 'version']
-    for field in required_fields:
-      if field not in data:
-        raise serializers.ValidationError({field: 'Este campo es requerido.'})
+
+    # Valido los campos requeridos si la instancia no existe, es decir, estamos creando un nuevo release.
+    if not self.instance:
+      for field in required_fields:
+        if field not in data:
+          raise serializers.ValidationError({field: 'Este campo es requerido.'})
+
     return data
