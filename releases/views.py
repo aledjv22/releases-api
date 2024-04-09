@@ -28,3 +28,14 @@ def get_releases(request):
   serializer = ReleaseSerializer(instance=Release.objects.all(), many=True)
 
   return Response({'Releases': serializer.data}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_release(request, id):
+  try:
+    release = Release.objects.get(id=id) 
+    serializer = ReleaseSerializer(release)
+    return Response({'Release': serializer.data}, status=status.HTTP_200_OK)
+  
+  except Release.DoesNotExist:
+    return Response({'Error': 'El release no existe.'}, status=status.HTTP_404_NOT_FOUND)
