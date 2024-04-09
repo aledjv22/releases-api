@@ -42,6 +42,8 @@ def get_release(request, id):
   
 
 @api_view(['DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
 def delete_release(request, id):
   try:
     release = Release.objects.get(id=id)
