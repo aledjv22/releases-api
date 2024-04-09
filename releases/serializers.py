@@ -7,7 +7,7 @@ class ReleaseSerializer(serializers.ModelSerializer):
     fields = ['id', 'title', 'description', 'tag', 'version', 'created_at', 'author']
 
   def validate(self, data):
-    required_fields = ['title', 'description', 'tag', 'version', 'author']
+    required_fields = ['title', 'description', 'tag', 'version']
     for field in required_fields:
       if field not in data:
         raise serializers.ValidationError({field: 'Este campo es requerido.'})

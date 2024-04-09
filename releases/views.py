@@ -47,12 +47,35 @@ def get_release(request, id):
 def delete_release(request, id):
   try:
     release = Release.objects.get(id=id)
-    
+
     if release.author != request.user:
       return Response({'Error': 'No tienes permiso para eliminar este release.'}, status=status.HTTP_403_FORBIDDEN)
 
     release.delete()
     return Response({'Mensaje': 'Release eliminado con exito.'}, status=status.HTTP_200_OK)
+  
+  except Release.DoesNotExist:
+    return Response({'Error': 'El release no existe.'}, status=status.HTTP_404_NOT_FOUND)
+  
+
+@api_view(['PATCH'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def update_release(request, id):
+  try:
+    release = Release.objects.get(id=id)
+
+    if release.author != request.user:
+      return Response({'Error': 'No tienes permiso para editar este release.'}, status=status.HTTP_403_FORBIDDEN)
+    
+    request.data.pop('author', None)
+    serializer = ReleaseSerializer(instance=release, data=request.data, partial=True)
+
+    if serializer.is_valid():
+      serializer.save()
+      return Response({'Release': serializer.data}, status=status.HTTP_200_OK)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
   
   except Release.DoesNotExist:
     return Response({'Error': 'El release no existe.'}, status=status.HTTP_404_NOT_FOUND)
