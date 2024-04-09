@@ -47,8 +47,12 @@ def get_release(request, id):
 def delete_release(request, id):
   try:
     release = Release.objects.get(id=id)
+    
+    if release.author != request.user:
+      return Response({'Error': 'No tienes permiso para eliminar este release.'}, status=status.HTTP_403_FORBIDDEN)
+
     release.delete()
-    return Response({'Release eliminado con exito.'}, status=status.HTTP_200_OK)
+    return Response({'Mensaje': 'Release eliminado con exito.'}, status=status.HTTP_200_OK)
   
   except Release.DoesNotExist:
     return Response({'Error': 'El release no existe.'}, status=status.HTTP_404_NOT_FOUND)
