@@ -4,6 +4,7 @@ from rest_framework import status
 from .serializers import ReleaseSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
+from .models import Release
 
 
 @api_view(['POST'])
@@ -20,3 +21,10 @@ def create_release(request):
     return Response({'Release': serializer.data}, status=status.HTTP_201_CREATED)
   
   return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_releases(request):
+  serializer = ReleaseSerializer(instance=Release.objects.all(), many=True)
+
+  return Response({'Releases': serializer.data}, status=status.HTTP_200_OK)
