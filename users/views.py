@@ -6,6 +6,8 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 from .serializers import UserSerializer
+from releases.serializers import ReleaseSerializer
+from releases.models import Release
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 
@@ -74,3 +76,12 @@ def logout(request):
     request.user.auth_token.delete()
     
     return Response({"message": "Cierre de sesión exitoso."}, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def user_releases(request, id):
+    user = get_object_or_404(User, id=id)
+    releases = Release.objects.filter(author=user)
+    serializer = ReleaseSerializer(instance=releases, many=True)
+
+    return Response({'Releases': serializer.data}, status=status.HTTP_200_OK)
