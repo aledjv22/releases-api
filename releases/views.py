@@ -10,7 +10,9 @@ from rest_framework.authentication import TokenAuthentication
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def create_release(request):
-  serializer = ReleaseSerializer(data=request.data)
+  data = request.data.copy()  # Realizo una copia de los datos
+  data['author'] = request.user.id  # Asigno el id del usuario logueado al campo 'author'
+  serializer = ReleaseSerializer(data=data) 
 
   if serializer.is_valid():
     serializer.save()
